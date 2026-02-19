@@ -60,11 +60,34 @@ namespace NorthwindRestApi.Controllers
             {
                 db.Customers.Add(cust);
                 db.SaveChanges();
-                return Ok($"Lisättiin uusi asiakas " + {cust.CompanyName} from {cust.City}");
+                return Ok($"Lisättiin uusi asiakas {cust.CompanyName} from {cust.City}");
             }
             catch (Exception e)
             {
-                return BadRequest("Tapahtui virhe. Lue lisää: " + e.InnerException:);
+                return BadRequest("Tapahtui virhe. Lue lisää: " + e.InnerException?.Message);
+            }
+        }
+
+        //Asiakkaan poistaminen
+        [HttpDelete("{id}")]
+        public ActionResult Delete(string id)
+        {
+            try
+            {
+
+                var asiakas = db.Customers.Find(id);
+
+                if (asiakas != null)
+                { // Jos id:llä löydyy asiakas
+                    db.Customers.Remove(asiakas);
+                    db.SaveChanges();
+                    return Ok("Asiakas " + asiakas.CompanyName + " poistettu.");
+                }
+
+                return NotFound("Asiakasta id:llä " + id + " ei löytynyt.");
+            }
+            catch (Exception e) {
+                return BadRequest(e.InnerException);
             }
         }
 
